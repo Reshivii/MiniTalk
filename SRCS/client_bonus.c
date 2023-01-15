@@ -1,16 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aburnott <aburnott@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 17:55:41 by aburnott          #+#    #+#             */
-/*   Updated: 2023/01/15 16:30:26 by aburnott         ###   ########.fr       */
+/*   Updated: 2023/01/15 16:50:56 by aburnott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minitalk.h"
+
+void handle_ack(int signum) {
+    printf("ACK received\n");
+}
 
 int	signal_error(void)
 {
@@ -46,6 +50,7 @@ int	main(int ac, char **av)
 	{
 		i = 0;
 		target_pid = ft_atoi(av[1]);
+		signal(SIGUSR1, handle_ack);
 		while (av[2][i])
 		{
 			if (!send_char(target_pid, av[2][i]))
