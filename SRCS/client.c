@@ -6,7 +6,7 @@
 /*   By: aburnott <aburnott@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 17:55:41 by aburnott          #+#    #+#             */
-/*   Updated: 2023/01/16 10:47:42 by aburnott         ###   ########.fr       */
+/*   Updated: 2023/01/16 11:11:22 by aburnott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	main(int ac, char **av)
 	{
 		i = 0;
 		target_pid = ft_atoi(av[1]);
-		if (target_pid > 1)
+		if (target_pid < 1)
 		{
 			ft_printf("Bad PID. (Nice try btw :3)");
 			return (-1);
