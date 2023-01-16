@@ -6,24 +6,25 @@
 /*   By: aburnott <aburnott@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 19:02:50 by aburnott          #+#    #+#             */
-/*   Updated: 2023/01/15 16:51:40 by aburnott         ###   ########.fr       */
+/*   Updated: 2023/01/16 10:41:13 by aburnott         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minitalk.h"
 
-void send_ack(pid_t pid) {
-    kill(pid, SIGUSR1);
+void	send_ack(pid_t pid)
+{
+	kill(pid, SIGUSR1);
 }
 
-void	signal_handler(int signum, siginfo_t *info)
+void	signal_handler(int signum, siginfo_t *info, void *ptr)
 {
 	static char	buf[500];
 	static int	buf_index = 0;
 	static char	current_char = 0;
 	static int	bits_received = 0;
-	pid_t	sender_pid;
 
+	(void) *ptr;
 	current_char += (signum == SIGUSR1);
 	bits_received++;
 	if (bits_received == 8)
@@ -34,8 +35,8 @@ void	signal_handler(int signum, siginfo_t *info)
 		{
 			write(1, buf, buf_index);
 			buf_index = 0;
-			sender_pid = info->si_pid;
-			send_ack(sender_pid);
+			if (current_char == '\0')
+				send_ack(info->si_pid);
 		}
 		bits_received = 0;
 		current_char = 0;
@@ -46,18 +47,16 @@ void	signal_handler(int signum, siginfo_t *info)
 
 int	main(void)
 {
-	pid_t	pid;
-	struct sigaction sigusr1_action;
+	pid_t				pid;
+	struct sigaction	action;
 
-    sigusr1_action.sa_sigaction = signal_handler;
-    sigusr1_action.sa_flags = SA_SIGINFO;
-    sigemptyset(&sigusr1_action.sa_mask);
-    sigaction(SIGUSR1, &sigusr1_action, NULL);
+	action.sa_sigaction = signal_handler;
+	action.sa_flags = SA_SIGINFO;
+	sigaction(SIGUSR1, &action, 0);
+	sigaction(SIGUSR2, &action, 0);
 	pid = getpid();
 	ft_printf("PID: %d\n", pid);
 	ft_printf("Waiting for message...\n");
-	//signal(SIGUSR1, signal_handler);
-	//signal(SIGUSR2, signal_handler);
 	while (1)
 		pause();
 	return (0);
